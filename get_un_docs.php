@@ -9,12 +9,13 @@
  */
 
 ERROR_REPORTING(E_ALL);
+date_default_timezone_set("Europe/Amsterdam");
 
 $search = urlencode('"climate change"');
-$dir = "unpdfs"; // directory where to store pdfs
+$dir = "unpdfs_en"; // directory where to store pdfs
 
 $start = 0; // where to start in rss
-$rss_url = "http://search.un.org/search?proxystylesheet=UN_ODS_test2&sort=date:D:S:d1&num=10&q=$search&btnG=Search+the+ODS&ie=utf8&oe=UTF-8&ie=UTF-8&ie=UTF-8&ie=UTF-8&ie=UTF-8&ie=UTF-8&output=xml_no_dtd&client=UN_ODS_test&getfields=DocumentSymbol.Title.Size.PublicationDate&ProxyReload=1&ulang=en&entqr=3&entqrm=0&entsp=a&ud=1&filter=0&site=ods_un_org&ip=157.150.185.24&access=p&start=$start";
+$rss_url = "http://search.un.org/search?proxystylesheet=UN_ODS_test2&sort=date:D:S:d1&num=10&q=$search&btnG=Search+the+ODS&ie=utf8&oe=UTF-8&ie=UTF-8&ie=UTF-8&ie=UTF-8&ie=UTF-8&ie=UTF-8&output=xml_no_dtd&client=UN_ODS_test&getfields=DocumentSymbol.Title.Size.PublicationDate&ProxyReload=1&ulang=en&entqr=3&entqrm=0&entsp=a&ud=1&filter=0&site=ods_un_org&ip=157.150.185.24&access=p&start=$start&lr=lang_en&partialfields=DocumentSymbol:A/";
 
 $cookiejar = "cookies.txt";
 
@@ -22,6 +23,7 @@ print "Getting rss url\n$rss_url\n";
 $content = fetch_through_curl($rss_url);
 $data = simplexml_load_string($content);
 while(count($data->channel->item)!=0) {
+	$i=0;
 	foreach($data->channel->item as $item) {
 		print "\nDoing item $i\n";
 	
@@ -65,9 +67,9 @@ while(count($data->channel->item)!=0) {
 	
 		
 		// log in
-		// $login_url = "http://daccess-dds-ny.un.org/prod/ods_mother.nsf?Login&Username=freeods2&Password=1234";
-		// print "Logging in\n$login_url\n";
-		// fetch_through_curl($login_url,$tmp_url,$cookiejar);
+		$login_url = "http://daccess-dds-ny.un.org/prod/ods_mother.nsf?Login&Username=freeods2&Password=1234";
+		print "Logging in\n$login_url\n";
+		fetch_through_curl($login_url,$tmp_url,$cookiejar);
 		
 		// save pdf	
 		print "Retrieving pdf\n$pdf_url\n";
@@ -76,9 +78,10 @@ while(count($data->channel->item)!=0) {
 		
 		print "Sleeping\n";
 		sleep(rand(1,3));
+		$i++;
 	}
 	$start += 10;
-	$rss_url = "http://search.un.org/search?proxystylesheet=UN_ODS_test2&sort=date:D:S:d1&num=10&q=$search&btnG=Search+the+ODS&ie=utf8&oe=UTF-8&ie=UTF-8&ie=UTF-8&ie=UTF-8&ie=UTF-8&ie=UTF-8&output=xml_no_dtd&client=UN_ODS_test&getfields=DocumentSymbol.Title.Size.PublicationDate&ProxyReload=1&ulang=en&entqr=3&entqrm=0&entsp=a&ud=1&filter=0&site=ods_un_org&ip=157.150.185.24&access=p&start=$start";
+	$rss_url = "http://search.un.org/search?proxystylesheet=UN_ODS_test2&sort=date:D:S:d1&num=10&q=$search&btnG=Search+the+ODS&ie=utf8&oe=UTF-8&ie=UTF-8&ie=UTF-8&ie=UTF-8&ie=UTF-8&ie=UTF-8&output=xml_no_dtd&client=UN_ODS_test&getfields=DocumentSymbol.Title.Size.PublicationDate&ProxyReload=1&ulang=en&entqr=3&entqrm=0&entsp=a&ud=1&filter=0&site=ods_un_org&ip=157.150.185.24&access=p&start=$start&lr=lang_en&partialfields=DocumentSymbol:A/";
 	print "\n\nGetting rss url\n$rss_url\n";
 
 	$content = fetch_through_curl($rss_url);
@@ -87,12 +90,11 @@ while(count($data->channel->item)!=0) {
 die("No more rss items found for start = $start\n");
 
 function get_filename($item,$pdfurl) {
-	preg_match("/([^\/]+?\.pdf)/",$pdfurl,$match);
+	preg_match("/([^\/]+?)\.pdf/",$pdfurl,$match);
 	$pdfname = $match[1];
-	return $pdfname;
 	
-	$date = date( 'YmdHMS',strtotime($item->pubDate));
-	$filename = $pdfname." - ".$date." - ".$item->title.".pdf";
+	$date = date( 'omdHis',strtotime($item->pubDate));
+	$filename = $item->title." - ".$date." - ".$pdfname.".pdf";
 	$filename = preg_replace("/\//", " ", $filename);
 	
 	return $filename;
