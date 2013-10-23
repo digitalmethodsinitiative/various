@@ -93,7 +93,7 @@ function get_filename($item,$pdfurl) {
 	preg_match("/([^\/]+?)\.pdf/",$pdfurl,$match);
 	$pdfname = $match[1];
 	
-	$date = date( 'omdHis',strtotime($item->pubDate));
+	$date = strftime( '%Y%m%d%H%M%S',strtotime($item->pubDate));
 	$filename = $item->title." - ".$date." - ".$pdfname.".pdf";
 	$filename = preg_replace("/\//", " ", $filename);
 	
