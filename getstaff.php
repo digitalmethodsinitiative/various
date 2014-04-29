@@ -130,6 +130,14 @@ function get_mediastudies_staff() {
                $lastName = str_replace("($firstName) ", '', $matches[2]);
            }
 
+           if (preg_match("/^(.*) (.*?)$/", $lastName, $matches)) {
+               $lastNameInserts = $matches[1];
+               $lastNameCapitals = $matches[2];
+           } else {
+               $lastNameInserts = '';
+               $lastNameCapitals = $lastName;
+            }
+
            // data sanity check
            
            if (!strlen($searchurl)) {
@@ -158,6 +166,8 @@ function get_mediastudies_staff() {
                        "firstName" => $firstName,
                        "initials" => $initials,
                        "lastName" => $lastName,
+                       "lastNameInserts" => $lastNameInserts,
+                       "lastNameCapitals" => $lastNameCapitals, 
                        "searchurl" => $searchurl,
                     );
            $resultset[$id] = $object;
