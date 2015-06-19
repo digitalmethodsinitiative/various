@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# This simple script downloads a set of URLs or html pages
+# This simple script downloads a set of URLs or html pages, as specified in a text or csv file
 # You need to have curl installed. On Ubuntu do: sudo apt-get install curl; on Mac OSX follow e.g. http://www.vettyofficer.com/2013/06/how-to-install-curl-in-mac-os-x.html
-# Modify the variables (list, column, results, ...) belwo
+# Modify the variables (list, column, results, ...) below
 # Run the script as follows: sh download.sh
 
-list="list.csv" # tab separated file
+list="list.csv" # tab separated file from whicht o read the URL
 column=1 # the column with the URL to download (first column = 1)
 results="results" # where results should be stored
 url_in_filename=0 # whether the URL should be reflected in the filename
